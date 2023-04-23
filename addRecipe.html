@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <title>Document</title>
+
+    <script>
+        function clearStorage(){
+            localStorage.setItem("recipeList", '');
+            localStorage.setItem("recipePhoto", '');
+        }
+        function addRecipe(){
+            const form = document.querySelector("#form");
+            const recipePhoto = document.querySelector("#recipePhoto");
+
+            const endpoint = "upload.php";
+            const formData = new FormData();
+
+            recipePhoto.files[0] = document.querySelector("#recipeName").value;
+            formData.append("inpFile", recipePhoto.files[0]);
+            
+            fetch(endpoint, {
+                
+                method: "post",
+                body: formData
+            }).catch(console.error);
+
+            let inputIngredients = document.querySelector("#ingredientList").getElementsByTagName("*");
+            let ingredientArray = [];
+            for (let i = 1; i < inputIngredients.length - 1; i++){
+                ingredientArray.push(inputIngredients[i].value);
+            }
+            let inputInstructions = document.querySelector("#cookingInstructions").getElementsByTagName("*");
+            let instructionArray = [];
+            for (let i = 1; i < inputInstructions.length - 1; i++){
+                instructionArray.push(inputInstructions[i].value);
+            }
+
+            let recipe = {
+                recipeName: document.querySelector("#recipeName").value,
+                numberOfServings: document.querySelector("#numberOfServings").value,
+                prepTime: document.querySelector("#prepTime").value,
+                cookTime: document.querySelector("#cookTime").value,
+                ingredientList: ingredientArray,
+                instructionList: instructionArray
+            }
+
+            let recipeList = [];
+            if (localStorage.getItem("recipeList") == null || localStorage.getItem("recipeList") == ''){
+                recipeList = [];
+            }
+            else {
+                recipeList = JSON.parse(localStorage.getItem("recipeList"));
+            }
+            
+            recipeList.push(recipe);
+            let recipeListJSON = JSON.stringify(recipeList);
+            localStorage.setItem("recipeList", recipeListJSON);
+            // console.log(localStorage.getItem("recipeList"));
+            // window.location.replace("recipeList.html");
+        }
+
+        function addIngredient(){
+            let ingredientList = document.querySelector("#ingredientList");
+            let inputElements = ingredientList.getElementsByTagName('*');
+            let secondToLast = inputElements[inputElements.length - 2];
+            let lastIngredient = ingredientList.lastElementChild;
+
+            for (let i = 0; i < inputElements.length - 1; i++){
+                if (inputElements[i].value == ''){
+                    inputElements[i].remove();
+                    return;
+                }
+            }
+
+            if (lastIngredient.value == '' && secondToLast.value == ''){
+                if (ingredientList.getElementsByTagName('*').length > 2){
+                    lastIngredient.remove();
+                }
+            }
+            else if (lastIngredient.value != ''){
+                let newInput = document.createElement("input");
+                newInput.oninput = addIngredient;
+                newInput.type = "text";
+                newInput.classList = "form-control";
+                newInput.placeholder = "Input ingredient";
+                ingredientList.appendChild(newInput);
+            }
+        }
+        
+        function addInstruction(){
+            let cookingInstructions = document.querySelector("#cookingInstructions");
+            let inputElements = cookingInstructions.getElementsByTagName('*');
+            let secondToLast = inputElements[inputElements.length - 2];
+            let lastInstruction = cookingInstructions.lastElementChild;
+            
+            for (let i = 0; i < inputElements.length - 1; i++){
+                if (inputElements[i].value == ''){
+                    inputElements[i].remove();
+                    return;
+                }
+            }
+
+            if (lastInstruction.value == '' && secondToLast.value == ''){
+                if (cookingInstructions.getElementsByTagName('*').length > 2){
+                    lastInstruction.remove();
+                }
+            }
+            else if (lastInstruction.value != ''){
+                let newInput = document.createElement("input");
+                newInput.oninput = addInstruction;
+                newInput.type = "text";
+                newInput.classList = "form-control";
+                newInput.placeholder = "Input cooking instruction";
+                cookingInstructions.appendChild(newInput);
+            }
+        }
+    </script>
+</head>
+<body>
+    <button onclick="location.href='recipeList.html';">Return to Recipe List</button>
+    <div class="container">
+        <form id="form">
+            <div class="form-group">
+                <label for="recipeName">Recipe Name:</label>
+                <input type="text" class="form-control" id="recipeName" placeholder="Input name of recipe" name="recipeName"  />
+            </div>
+            <div class="form-group">
+                <label for="numberOfServings">Number of Servings:</label>
+                <input type="number" class="form-control" id="numberOfServings" placeholder="Input number of people served" name="numberOfServings"  />
+            </div>
+            <div class="form-group">
+                <label for="prepTime">Preparation Time:</label>
+                <input type="number" class="form-control" id="prepTime" placeholder="Input preparation time for recipe" name="prepTime"  />
+            </div>
+            <div class="form-group">
+                <label for="cookTime">Cooking Time:</label>
+                <input type="number" class="form-control" id="cookTime" placeholder="Input cooking time for recipe" name="cookTime"  />
+            </div>
+            <div class="form-group">
+                <label for="recipePhoto">Add Photo of Recipe:</label>
+                <input type="file" id="recipePhoto">
+            </div>
+            <div class="row">
+                <div id="ingredientList" class="form-group col-sm-4 mx-auto">
+                    <label for="ingredientList">Ingredient List:</label>
+                    <input oninput="addIngredient()" type="text" class="form-control" placeholder="Input ingredient" />
+                </div>
+                <div id="cookingInstructions" class="form-group col-sm-4 mx-auto">
+                    <label for="cookingInstructions">Cooking Instructions:</label>
+                    <input oninput="addInstruction()" type="text" class="form-control" placeholder="Input cooking instruction" />
+                </div>
+            </div>
+            <button type="button" onclick="addRecipe()">Add Recipe</button>
+            <button type="button" onclick="clearStorage()">Clear Storage</button>
+        </form>
+    </div>
+</body>
+</html>
