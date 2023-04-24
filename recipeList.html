@@ -12,28 +12,53 @@
     <title>Document</title>
 
     <script>
+      function goToRecipe(index){
+        localStorage.setItem("currentRecipe", index);
+        window.location.replace("recipeDetails.html");
+      }
+
       function pageSetup(){
         let recipeList = JSON.parse(localStorage.getItem("recipeList"));
         console.log(recipeList);
-        const img = new Image();
-        img.src = recipeList[0].recipePhoto;
-        document.querySelector("#recipeList").appendChild(img);
+        
+        let recipeCards = document.querySelector("#recipeCards");
+
+        for (let i = 0; i < recipeList.length; i++){
+          let newCard = document.createElement("button");
+          let recipeIndex = document.createElement("input");
+          let recipeName = document.createElement("h4");
+          let recipePhoto = document.createElement("img");
+          let prepCookTime = document.createElement("p");
+          let difficulty = document.createElement("p");
+
+          newCard.classList = "col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto";
+          newCard.addEventListener('click', function() {
+            goToRecipe(i);
+          });
+
+          recipeIndex.hidden = true;
+          recipeIndex.value = i;
+          recipeName.innerHTML = recipeList[i].recipeName;
+          recipePhoto.src = "uploads/" + recipeList[i].recipePhoto;
+          recipePhoto.width = "150";
+          prepCookTime.innerHTML = String(parseInt(recipeList[i].prepTime) + parseInt(recipeList[i].cookTime)) + " minutes";
+          difficulty.innerHTML = recipeList[i].difficulty;
+
+          newCard.appendChild(recipeIndex);
+          newCard.appendChild(recipeName);
+          newCard.appendChild(recipePhoto);
+          newCard.appendChild(prepCookTime);
+          newCard.appendChild(difficulty);
+
+          recipeCards.appendChild(newCard);
+        }
       }
     </script>
 </head>
 <body onload="pageSetup()">
     <h1>Recipe Manager</h1>
     <div class="container">
-        <div id="recipeList" class="row">
-            <div class="col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-            <div class="col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-            <div class="col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
+        <div id="recipeCards" class="row">
         </div>
     </div>
     <div>

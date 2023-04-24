@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <title>Document</title>
+    
+    <script>
+        let tabButtons = null;
+        let tabPanels = null;
+        let ingredientList = [];
+        let currentRecipe = JSON.parse(localStorage.getItem("recipeList"))[parseInt(localStorage.getItem("currentRecipe"))];
+
+        function pageSetup(){
+
+            console.log(currentRecipe);
+            
+            tabButtons = document.querySelectorAll(".buttonContainer button");
+            tabPanels = document.querySelectorAll(".tabPanel");
+            showPanel(0);
+
+            document.querySelector("#recipeName").innerHTML = currentRecipe.recipeName;
+            document.querySelector("#numberOfServings").innerHTML = "Serves " + currentRecipe.numberOfServings + " people"
+            document.querySelector("#prepTime").innerHTML = "Preparation time: " + currentRecipe.prepTime;
+            document.querySelector("#cookTime").innerHTML = "Cooking time: " + currentRecipe.cookTime;
+            document.querySelector("#difficulty").innerHTML = "Difficulty: " + currentRecipe.difficulty;
+
+            for (let i = 0; i < currentRecipe.ingredientList.length; i++){
+                let newItem = document.createElement("li");
+                newItem.innerHTML = currentRecipe.ingredientList[i];
+                tabPanels[0].appendChild(newItem);
+                ingredientList.push(newItem.innerHTML);
+            }
+            for (let i = 0; i < currentRecipe.instructionList.length; i++){
+                let newItem = document.createElement("li");
+                newItem.innerHTML = currentRecipe.instructionList[i];
+                tabPanels[1].appendChild(newItem);
+            }
+            document.querySelector("#recipePhoto").src = "uploads/" + currentRecipe.recipePhoto;
+
+        }
+
+        function getNumbers(string){
+            let charArray = [...string];
+            let numbers = charArray.reduce(function (numString, element){
+                let nums = "0123456789";
+                if (nums.includes(element)){
+                    return numString + element;
+                }
+                return numString;
+            },"");
+            return numbers;
+        }
+
+        function getNumberLocation(string){
+            let charArray = [...string];
+            let numbers = "0123456789";
+            for (let i = 0; i < charArray.length; i++){
+                if (numbers.includes(charArray[i])){
+                    return i;
+                }
+            }
+        }
+
+        function changeQuantity(){
+            let quantity = parseInt(document.querySelector("#sliderBar").value);
+            
+            quantity = quantity == 0 ? 0.5 : quantity;
+
+            switch (quantity){
+                case 0.5:
+                    document.querySelector("#quantity").innerHTML = "Half recipe";
+                    break;
+                case 1:
+                    document.querySelector("#quantity").innerHTML = "Single recipe";
+                    break;
+                case 2:
+                    document.querySelector("#quantity").innerHTML = "Double recipe";
+                    break;
+                case 3:
+                    document.querySelector("#quantity").innerHTML = "Triple recipe";
+                    break;
+                default:
+                    document.querySelector("#quantity").innerHTML = "";
+            }
+            let ingredientElements = tabPanels[0].getElementsByTagName('*');
+            console.log(ingredientElements);
+            for (let i = 0; i < ingredientList.length; i++){
+                let ingredientItem = ingredientList[i];
+                let numberLocation = getNumberLocation(ingredientItem);
+                let ingredientAmount = getNumbers(ingredientItem);
+                ingredientElements[i].innerHTML = ingredientItem.substring(0,numberLocation) + 
+                                                    (ingredientAmount * quantity) + 
+                                                    ingredientItem.substring(numberLocation + ingredientAmount, ingredientItem.length);
+            }
+            document.querySelector("#numberOfServings").innerHTML = "Serves " + currentRecipe.numberOfServings * quantity + " people"
+            document.querySelector("#prepTime").innerHTML = "Preparation time: " + currentRecipe.prepTime * quantity;
+            document.querySelector("#cookTime").innerHTML = "Cooking time: " + currentRecipe.cookTime * quantity;
+        }
+
+        function showPanel(panelIndex){
+            function addMouseOverEffect(){
+                tabButtons[hidePanel].style.backgroundColor = "lightgray";
+                tabButtons[hidePanel].style.color = "black";
+            }
+            function addMouseOutEffect(){
+                tabButtons[hidePanel].style.backgroundColor = "grey";
+                tabButtons[hidePanel].style.color = "white";
+            }
+            let hidePanel = panelIndex == 0 ? 1 : 0;
+            tabButtons[panelIndex].style.backgroundColor = "lightgray";
+            tabButtons[hidePanel].style.backgroundColor = "grey";
+            tabButtons[panelIndex].style.color = "black";
+            tabButtons[hidePanel].style.color = "white";
+            tabButtons[panelIndex].onmouseover = null;
+            tabButtons[panelIndex].onmouseout = null;
+            tabButtons[hidePanel].onmouseover = addMouseOverEffect;
+            tabButtons[hidePanel].onmouseout = addMouseOutEffect;
+
+            tabPanels[panelIndex].style.display = "block";
+            tabPanels[panelIndex].style.backgroundColor = "lightgray";
+            tabPanels[panelIndex].style.color = "black";
+            tabPanels[hidePanel].style.color = "white";
+            tabPanels[hidePanel].style.display = "none";
+        }
+    </script>
+</head>
+    <body onload="pageSetup()">
+        <div class="row">
+            <h1 id="recipeName" class="col-8 col-sm-6 mx-auto"></h1>
+            <button onclick="window.open('recipeList.html')" class="col-8 col-sm-6 mx-auto">Return to list of recipes</button>
+            <div id="recipeSummary" class="col-8 col-sm-6 mx-auto">
+                <p id="numberOfServings"></p>
+                <p id="prepTime"></p>
+                <p id="cookTime"></p>
+                <p>Change quantity:</p>
+                <input onchange="changeQuantity()" id="sliderBar" type="range" step="1" min="0" max="3" value="1">
+                <p id="quantity">Single recipe</p>
+                <p id="difficulty"></p>
+            </div>
+            <img id="recipePhoto" class="col-8 col-sm-6 mx-auto" />
+        </div>
+        <div class="tabContainer">
+            <div class="buttonContainer row">
+                <button class="col-8 col-sm-6 mx-auto" onclick="showPanel(0)">Ingredient List</button>
+                <button class="col-8 col-sm-6 mx-auto" onclick="showPanel(1)">Cooking Instructions</button>
+            </div>
+            <div class="tabPanel" style="padding-top: 5px"></div>
+            <div class="tabPanel" style="padding-top: 5px"></div>
+        </div>
+    </body>
+</html>
