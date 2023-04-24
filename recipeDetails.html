@@ -42,8 +42,18 @@
                 newItem.innerHTML = currentRecipe.instructionList[i];
                 tabPanels[1].appendChild(newItem);
             }
-            document.querySelector("#recipePhoto").src = "uploads/" + currentRecipe.recipePhoto;
+            let recipePhoto = document.querySelector("#recipePhoto");
+            recipePhoto.src = "uploads/" + currentRecipe.recipePhoto;
+            recipePhoto.style.borderRadius = "35%";
+            recipePhoto.style.margin = "20px";
+            console.log(recipePhoto);
 
+
+            document.querySelector("body").style.backgroundImage = "url(uploads/background.jpg)";
+            document.querySelector("body").style.backgroundAttachment = "fixed";
+            document.querySelector("body").style.backgroundSize = "100%";
+            document.querySelector("body").style.color = "yellow";
+            document.querySelector("body").style.padding = "40px";
         }
 
         function getNumbers(string){
@@ -97,7 +107,7 @@
                 let ingredientAmount = getNumbers(ingredientItem);
                 ingredientElements[i].innerHTML = ingredientItem.substring(0,numberLocation) + 
                                                     (ingredientAmount * quantity) + 
-                                                    ingredientItem.substring(numberLocation + ingredientAmount, ingredientItem.length);
+                                                    ingredientItem.substring(numberLocation + ingredientAmount.length, ingredientItem.length);
             }
             document.querySelector("#numberOfServings").innerHTML = "Serves " + currentRecipe.numberOfServings * quantity + " people"
             document.querySelector("#prepTime").innerHTML = "Preparation time: " + currentRecipe.prepTime * quantity;
@@ -124,18 +134,35 @@
             tabButtons[hidePanel].onmouseout = addMouseOutEffect;
 
             tabPanels[panelIndex].style.display = "block";
-            tabPanels[panelIndex].style.backgroundColor = "lightgray";
-            tabPanels[panelIndex].style.color = "black";
-            tabPanels[hidePanel].style.color = "white";
+            tabPanels[panelIndex].style.backgroundColor = "transparent";
+            tabPanels[panelIndex].style.color = "yellow";
+            tabPanels[hidePanel].style.color = "yellow";
             tabPanels[hidePanel].style.display = "none";
         }
+        
+        function deleteRecipe(){
+            if (confirm("Are you sure you want to delete this recipe?")){
+                let recipeList = JSON.parse(localStorage.getItem("recipeList"));
+                recipeList.splice(JSON.parse(localStorage.getItem("currentRecipe")), 1);
+                localStorage.setItem("recipeList", JSON.stringify(recipeList));
+                window.location.replace('recipeList.html');
+            }
+        }
     </script>
+    <style>
+        button{
+            border-radius: 20px;
+            width: 40%;
+            border: none;
+        }
+    </style>
 </head>
     <body onload="pageSetup()">
         <div class="row">
-            <h1 id="recipeName" class="col-8 col-sm-6 mx-auto"></h1>
-            <button onclick="window.open('recipeList.html')" class="col-8 col-sm-6 mx-auto">Return to list of recipes</button>
+            <button onclick="deleteRecipe()" class="col-8 col-sm-4 mx-auto btn-danger">Delete this recipe</button>
+            <button onclick="window.location.replace('recipeList.html')" class="col-8 col-sm-4 mx-auto btn-primary">Return to list of recipes</button>
             <div id="recipeSummary" class="col-8 col-sm-6 mx-auto">
+                <h1 id="recipeName" class="col-8 col-sm-6 mx-auto"></h1>
                 <p id="numberOfServings"></p>
                 <p id="prepTime"></p>
                 <p id="cookTime"></p>
@@ -144,15 +171,15 @@
                 <p id="quantity">Single recipe</p>
                 <p id="difficulty"></p>
             </div>
-            <img id="recipePhoto" class="col-8 col-sm-6 mx-auto" />
+            <img id="recipePhoto" class="col-8 col-md-4 mx-auto "/>
         </div>
         <div class="tabContainer">
             <div class="buttonContainer row">
-                <button class="col-8 col-sm-6 mx-auto" onclick="showPanel(0)">Ingredient List</button>
-                <button class="col-8 col-sm-6 mx-auto" onclick="showPanel(1)">Cooking Instructions</button>
+                <button class="col-8 col-sm-4 mx-auto" onclick="showPanel(0)">Ingredient List</button>
+                <button class="col-8 col-sm-4 mx-auto" onclick="showPanel(1)">Cooking Instructions</button>
             </div>
-            <div class="tabPanel" style="padding-top: 5px"></div>
-            <div class="tabPanel" style="padding-top: 5px"></div>
+            <ul class="tabPanel" style="padding-top: 5px; list-style-type: none;"></ul>
+            <ul class="tabPanel" style="padding-top: 5px; list-style-type: none;"></ul>
         </div>
     </body>
 </html>

@@ -24,6 +24,7 @@
         let recipeCards = document.querySelector("#recipeCards");
 
         for (let i = 0; i < recipeList.length; i++){
+          let recipeBox = document.createElement("div");
           let newCard = document.createElement("button");
           let recipeIndex = document.createElement("input");
           let recipeName = document.createElement("h4");
@@ -31,7 +32,13 @@
           let prepCookTime = document.createElement("p");
           let difficulty = document.createElement("p");
 
-          newCard.classList = "col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto";
+          recipeBox.classList = "col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto ";
+
+          newCard.style.borderRadius = "20px"
+          newCard.style.border = "none";
+          newCard.style.margin = "103px";
+          newCard.style.backgroundColor = "olive";
+          newCard.style.margin = "10px";
           newCard.addEventListener('click', function() {
             goToRecipe(i);
           });
@@ -50,10 +57,25 @@
           newCard.appendChild(prepCookTime);
           newCard.appendChild(difficulty);
 
-          recipeCards.appendChild(newCard);
+          recipeBox.appendChild(newCard);
+
+          recipeCards.appendChild(recipeBox);
         }
+        document.querySelector("body").style.backgroundImage = "url(uploads/background.jpg)";
+        document.querySelector("body").style.backgroundAttachment = "fixed";
+        document.querySelector("body").style.backgroundSize = "100%";
       }
     </script>
+    <style>
+        button{
+            border-radius: 20px;
+            border: none;
+        }
+        body{
+          padding: 40px;
+          color:yellow;
+        }
+    </style>
 </head>
 <body onload="pageSetup()">
     <h1>Recipe Manager</h1>
@@ -62,7 +84,7 @@
         </div>
     </div>
     <div>
-      <h1><a href="addRecipe.html">Add New Recipe</a></h1>
+      <h2><button style="padding: 5px;" class="btn-success" onclick="window.location.replace('addRecipe.html')">Add New Recipe</button></h2>
     </div>
 </body>
 </html>

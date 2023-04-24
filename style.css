@@ -11,7 +11,7 @@ body{
     height: 15%;
 }
 .tabContainer .buttonContainer button{
-    width: 50%;
+    width: 40%;
     height: 100%;
     float: left;
     border: none;
@@ -28,7 +28,7 @@ body{
 .tabPanel{
     height: 85%;
     background-color: lightgray;
-    color: white;
+    color: yellow;
     text-align: center;
     padding-top: 5px;
     box-sizing: border-box;
