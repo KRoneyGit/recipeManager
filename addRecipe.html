@@ -11,7 +11,9 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <title>Document</title>
 
+    <!-- <script src="Recipe.js"></script> -->
     <script>
+        // import Recipe from 'Recipe.js';
         function clearStorage(){
             localStorage.setItem("recipeList", '');
             localStorage.setItem("recipePhoto", '');
@@ -153,16 +155,38 @@
                 instructionArray.push(inputInstructions[i].value);
             }
 
-            let recipe = {
-                recipeName: document.querySelector("#recipeName").value,
-                numberOfServings: document.querySelector("#numberOfServings").value,
-                prepTime: document.querySelector("#prepTime").value,
-                cookTime: document.querySelector("#cookTime").value,
-                difficulty: document.querySelector("#difficulty").value,
-                ingredientList: ingredientArray,
-                instructionList: instructionArray,
-                recipePhoto: photoLink
-            }
+            recipeName = document.querySelector("#recipeName").value;
+            numberOfServings = document.querySelector("#numberOfServings").value;
+            prepTime = document.querySelector("#prepTime").value;
+            cookTime = document.querySelector("#cookTime").value;
+            difficulty = document.querySelector("#difficulty").value;
+            ingredientList = ingredientArray;
+            instructionList = instructionArray;
+            recipePhoto = photoLink;
+
+            // class Recipe {
+            //     constructor(recipeName, numberOfServings, prepTime, cookTime, dicciculty, ingredientList, instructionList, recipePhoto){
+            //         this.recipeName = recipeName
+            //         this.numberOfServings = numberOfServings
+            //         this.prepTime = prepTime
+            //         this.cookTime = cookTime
+            //         this.difficulty = difficulty
+            //         this.ingredientList = ingredientList
+            //         this.instructionList = instructionList
+            //         this.recipePhoto = recipePhoto
+            //     }
+            // }
+            let recipe = new Recipe(recipeName, numberOfServings, prepTime, cookTime, difficulty, ingredientList, instructionList, recipePhoto);
+            // let recipe = {
+            //     recipeName: document.querySelector("#recipeName").value,
+            //     numberOfServings: document.querySelector("#numberOfServings").value,
+            //     prepTime: document.querySelector("#prepTime").value,
+            //     cookTime: document.querySelector("#cookTime").value,
+            //     difficulty: document.querySelector("#difficulty").value,
+            //     ingredientList: ingredientArray,
+            //     instructionList: instructionArray,
+            //     recipePhoto: photoLink
+            // }
 
             let recipeList = [];
             if (localStorage.getItem("recipeList") == null || localStorage.getItem("recipeList") == ''){
