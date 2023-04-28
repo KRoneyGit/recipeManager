@@ -1,5 +1,5 @@
-export class Recipe {
-    constructor(recipeName, numberOfServings, prepTime, cookTime, dicciculty, ingredientList, instructionList, recipePhoto){
+class Recipe {
+    constructor(recipeName, numberOfServings, prepTime, cookTime, difficulty, ingredientList, instructionList, recipePhoto){
         this.recipeName = recipeName
         this.numberOfServings = numberOfServings
         this.prepTime = prepTime

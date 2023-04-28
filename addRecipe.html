@@ -11,13 +11,12 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <title>Document</title>
 
-    <!-- <script src="Recipe.js"></script> -->
+    <script src="Recipe.js"></script>
     <script>
-        // import Recipe from 'Recipe.js';
-        function clearStorage(){
-            localStorage.setItem("recipeList", '');
-            localStorage.setItem("recipePhoto", '');
-        }
+        // function clearStorage(){
+        //     localStorage.setItem("recipeList", '');
+        //     localStorage.setItem("recipePhoto", '');
+        // }
 
         function validateForm(){
             const form = document.querySelector("#form");
@@ -155,38 +154,16 @@
                 instructionArray.push(inputInstructions[i].value);
             }
 
-            recipeName = document.querySelector("#recipeName").value;
-            numberOfServings = document.querySelector("#numberOfServings").value;
-            prepTime = document.querySelector("#prepTime").value;
-            cookTime = document.querySelector("#cookTime").value;
-            difficulty = document.querySelector("#difficulty").value;
-            ingredientList = ingredientArray;
-            instructionList = instructionArray;
-            recipePhoto = photoLink;
+            let recipeName = document.querySelector("#recipeName").value;
+            let numberOfServings = document.querySelector("#numberOfServings").value;
+            let prepTime = document.querySelector("#prepTime").value;
+            let cookTime = document.querySelector("#cookTime").value;
+            let difficulty = document.querySelector("#difficulty").value;
+            let ingredientList = ingredientArray;
+            let instructionList = instructionArray;
+            let recipePhoto = photoLink;
 
-            // class Recipe {
-            //     constructor(recipeName, numberOfServings, prepTime, cookTime, dicciculty, ingredientList, instructionList, recipePhoto){
-            //         this.recipeName = recipeName
-            //         this.numberOfServings = numberOfServings
-            //         this.prepTime = prepTime
-            //         this.cookTime = cookTime
-            //         this.difficulty = difficulty
-            //         this.ingredientList = ingredientList
-            //         this.instructionList = instructionList
-            //         this.recipePhoto = recipePhoto
-            //     }
-            // }
             let recipe = new Recipe(recipeName, numberOfServings, prepTime, cookTime, difficulty, ingredientList, instructionList, recipePhoto);
-            // let recipe = {
-            //     recipeName: document.querySelector("#recipeName").value,
-            //     numberOfServings: document.querySelector("#numberOfServings").value,
-            //     prepTime: document.querySelector("#prepTime").value,
-            //     cookTime: document.querySelector("#cookTime").value,
-            //     difficulty: document.querySelector("#difficulty").value,
-            //     ingredientList: ingredientArray,
-            //     instructionList: instructionArray,
-            //     recipePhoto: photoLink
-            // }
 
             let recipeList = [];
             if (localStorage.getItem("recipeList") == null || localStorage.getItem("recipeList") == ''){
@@ -326,7 +303,7 @@
                 </div>
             </div>
             <button class="btn-success col-sm-4 mx-auto" type="button" onclick="validateForm()">Add Recipe</button>
-            <button class="btn-danger col-sm-4 mx-auto" type="button" onclick="clearStorage()">Clear Storage</button>
+            <!-- <button class="btn-danger col-sm-4 mx-auto" type="button" onclick="clearStorage()">Clear Storage</button> -->
         </form>
     </div>
 </body>
