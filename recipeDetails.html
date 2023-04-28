@@ -59,7 +59,7 @@
         function getNumbers(string){
             let charArray = [...string];
             let numbers = charArray.reduce(function (numString, element){
-                let nums = "0123456789";
+                let nums = ".0123456789";
                 if (nums.includes(element)){
                     return numString + element;
                 }
@@ -70,7 +70,7 @@
 
         function getNumberLocation(string){
             let charArray = [...string];
-            let numbers = "0123456789";
+            let numbers = ".0123456789";
             for (let i = 0; i < charArray.length; i++){
                 if (numbers.includes(charArray[i])){
                     return i;
@@ -111,7 +111,6 @@
             }
             document.querySelector("#numberOfServings").innerHTML = "Serves " + currentRecipe.numberOfServings * quantity + " people"
             document.querySelector("#prepTime").innerHTML = "Preparation time: " + currentRecipe.prepTime * quantity;
-            document.querySelector("#cookTime").innerHTML = "Cooking time: " + currentRecipe.cookTime * quantity;
         }
 
         function showPanel(panelIndex){
