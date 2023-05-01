@@ -13,12 +13,9 @@
 
     <script src="Recipe.js"></script>
     <script>
-        // function clearStorage(){
-        //     localStorage.setItem("recipeList", '');
-        //     localStorage.setItem("recipePhoto", '');
-        // }
-
+        // function to validate form data, called when form button is clicked
         function validateForm(){
+            // set variables for different div elements of form inputs
             const form = document.querySelector("#form");
             const recipeName = document.querySelector("#recipeName");
             const numberOfServings = document.querySelector("#numberOfServings");
@@ -28,6 +25,7 @@
             const ingredientList = document.querySelector("#ingredientList").getElementsByTagName("*");
             const instructionList = document.querySelector("#cookingInstructions").getElementsByTagName("*");
             
+            //set variables for div elements to be used for validation feedback to user
             const nameError = document.querySelector("#nameError");
             const servingError = document.querySelector("#servingError");
             const prepError = document.querySelector("#prepError");
@@ -36,6 +34,7 @@
             const ingredientError = document.querySelector("#ingredientError");
             const instructionError = document.querySelector("#instructionError");
 
+            // sets all error message divs to contain empty strings before adding most recent and relevant error messages
             nameError.innerHTML = "";
             servingError.innerHTML = "";
             prepError.innerHTML = "";
@@ -44,6 +43,7 @@
             ingredientError.innerHTML = "";
             instructionError.innerHTML = "";
 
+            // sets display of all error divs to none so they do not appear unless needed later
             nameError.style.display = "none";
             servingError.style.display = "none";
             prepError.style.display = "none";
@@ -52,8 +52,10 @@
             ingredientError.style.display = "none";
             instructionError.style.display = "none";
             
+            // set a variable to track total number of errors to determine if form is allowed to submit
             let errorCount = 0;
 
+            // multiple if statements and loops to validate user input into each field
             if (recipeName.value == ''){
                 nameError.innerHTML += "A recipe name must be entered<br>";
                 nameError.style.display = "block";
@@ -84,7 +86,6 @@
                 photoError.style.display = "block";
                 errorCount++;
             }
-            
             let errorFound = false;
             for (let i = 2; i < ingredientList.length - 1; i++){
                 if (/\d/.test(ingredientList[i].value) == false){
@@ -104,7 +105,6 @@
                 ingredientError.innerHTML += "At least one ingredient must be entered<br>";
                 ingredientError.style.display = "block";
             }
-            
             for (let i = 2; i < instructionList.length - 1; i++){
                 if (instructionList[i].value.length < 4){
                     instructionError.innerHTML = "Instruction item must contain at least 4 characters";
@@ -116,21 +116,29 @@
                 instructionError.style.display = "block";
             }
 
+            // if no errors are found run addRecipe() function
             if (errorCount == 0) addRecipe();
 
         }
 
+        // function to add a recipe to the application by saving in local storage
         async function addRecipe(){
+            // assign variables for form element and file input element
             const form = document.querySelector("#form");
             const inpFile = document.querySelector("#recipePhoto");
 
+            // assign variables for photo upload path and FormData object, assign null variable to use later for photo path
             const endpoint = "upload.php";
             const formData = new FormData();
             let photoLink = null;
 
+            // check if a file was selected for upload, if not assign default photo
             if (inpFile.files[0] == null){
                 photoLink = "fryingPan.jpg";
             }
+            // if a file was selected, assign selected file to files attribute of dom property, then append to FormData object
+            // next, assign the name of the photo to the photoLink variable to be stored for use in retrieving photo later
+            // uses async/await to successfully retrieve file uploaded from user
             else{
                 inpFile.files[0] = document.querySelector("#recipeName").value;
                 formData.append("inpFile", inpFile.files[0]);
@@ -143,6 +151,9 @@
                 }).catch(console.error);
             }
 
+            // assign variable for ingredients div and create a variable for the array of ingredients
+            // uses for loop to check through all ingredients and adds each to the array
+            // same method used to loop through and assign cooking instructions to an array
             let inputIngredients = document.querySelector("#ingredientList").getElementsByTagName("*");
             let ingredientArray = [];
             for (let i = 2; i < inputIngredients.length - 1; i++){
@@ -154,6 +165,7 @@
                 instructionArray.push(inputInstructions[i].value);
             }
 
+            // create and assign variables to the values from the form
             let recipeName = document.querySelector("#recipeName").value;
             let numberOfServings = document.querySelector("#numberOfServings").value;
             let prepTime = document.querySelector("#prepTime").value;
@@ -163,8 +175,11 @@
             let instructionList = instructionArray;
             let recipePhoto = photoLink;
 
+            // use variables created to make a new object of Recipe class
             let recipe = new Recipe(recipeName, numberOfServings, prepTime, cookTime, difficulty, ingredientList, instructionList, recipePhoto);
 
+            // creates variable to store complete list of all recipes
+            // check if a list currently exists, and if it doesn't creates a new one, otherwise retrieves current list
             let recipeList = [];
             if (localStorage.getItem("recipeList") == null || localStorage.getItem("recipeList") == ''){
                 recipeList = [];
@@ -173,18 +188,24 @@
                 recipeList = JSON.parse(localStorage.getItem("recipeList"));
             }
             
+            // add new recipe to recipe list, then turn list to JSON format and store in local storage
+            // finally redirecting to recipe list page
             recipeList.push(recipe);
             let recipeListJSON = JSON.stringify(recipeList);
             localStorage.setItem("recipeList", recipeListJSON);
             window.location.replace("recipeList.html");
         }
 
+        // function to add an additional input element for ingredient list
         function addIngredient(){
+            // assign variable for div containing input elements and an array of elements in that div
+            // assign variables for 2nd to last and last input field for use in adding/removing extra input elements
             let ingredientList = document.querySelector("#ingredientList");
             let inputElements = ingredientList.getElementsByTagName('*');
             let secondToLast = inputElements[inputElements.length - 2];
             let lastIngredient = ingredientList.lastElementChild;
 
+            // loop to check to see if an ingredient has been deleted higher in the list to remove the empty input field
             for (let i = 0; i < inputElements.length - 1; i++){
                 if (inputElements[i].value == ''){
                     inputElements[i].remove();
@@ -192,11 +213,13 @@
                 }
             }
 
+            // check to see if last two input fields are empty and delete last one if both are empty
             if (lastIngredient.value == '' && secondToLast.value == ''){
                 if (ingredientList.getElementsByTagName('*').length > 2){
                     lastIngredient.remove();
                 }
             }
+            // check if last input element has any information in it, creating a new input field if it has
             else if (lastIngredient.value != ''){
                 let newInput = document.createElement("input");
                 newInput.oninput = addIngredient;
@@ -207,12 +230,16 @@
             }
         }
         
+        // function to add an additional input element for instruction list
         function addInstruction(){
+            // assign variable for div containing input elements and an array of elements in that div
+            // assign variables for 2nd to last and last input field for use in adding/removing extra input elements
             let cookingInstructions = document.querySelector("#cookingInstructions");
             let inputElements = cookingInstructions.getElementsByTagName('*');
             let secondToLast = inputElements[inputElements.length - 2];
             let lastInstruction = cookingInstructions.lastElementChild;
             
+            // loop to check to see if an instruction has been deleted higher in the list to remove the empty input field
             for (let i = 0; i < inputElements.length - 1; i++){
                 if (inputElements[i].value == ''){
                     inputElements[i].remove();
@@ -220,11 +247,13 @@
                 }
             }
 
+            // check to see if last two input fields are empty and delete last one if both are empty
             if (lastInstruction.value == '' && secondToLast.value == ''){
                 if (cookingInstructions.getElementsByTagName('*').length > 2){
                     lastInstruction.remove();
                 }
             }
+            // check if last input element has any information in it, creating a new input field if it has
             else if (lastInstruction.value != ''){
                 let newInput = document.createElement("input");
                 newInput.oninput = addInstruction;
@@ -235,12 +264,19 @@
             }
         }
         
+        // function to run after body of html finishes loading, changes to page style only
         function pageSetup(){
             document.querySelector("body").style.backgroundImage = "url(uploads/background.jpg)";
             document.querySelector("body").style.backgroundAttachment = "fixed";
             document.querySelector("body").style.backgroundSize = "100%";
             document.querySelector("body").style.color = "yellow";
         }
+
+        // function to clear local storage, commented out after development complete
+        // function clearStorage(){
+        //     localStorage.setItem("recipeList", '');
+        //     localStorage.setItem("recipePhoto", '');
+        // }
     </script>
     <style>
         button{
@@ -287,7 +323,7 @@
             </div>
             <div class="form-group">
                 <label for="recipePhoto">Add Photo of Recipe:</label>
-                <input type="file" id="recipePhoto">
+                <input type="file" id="recipePhoto" accept="image/*" capture="camera">
                 <div id="photoError" class="alert alert-danger" style="display:none"></div>
             </div>
             <div class="row">

@@ -12,43 +12,53 @@
     <title>Document</title>
     
     <script>
+        // assign variables to use for displaying ingredients and instructions
         let tabButtons = null;
         let tabPanels = null;
         let ingredientList = [];
+
+        // assign variable for current recipe by retrieving list from local storage, parsing, then using index value from local storage
         let currentRecipe = JSON.parse(localStorage.getItem("recipeList"))[parseInt(localStorage.getItem("currentRecipe"))];
 
+        // function to setup page after body of html finishes loading
         function pageSetup(){
-
-            console.log(currentRecipe);
-            
+            // assigns variable for buttons/display panels in ingredient/instruction pannel
             tabButtons = document.querySelectorAll(".buttonContainer button");
             tabPanels = document.querySelectorAll(".tabPanel");
+
+            // calls show panel function that is below to display ingredient panel first
             showPanel(0);
 
+            // sets inner HTML of recipe information from previously assigned variable
             document.querySelector("#recipeName").innerHTML = currentRecipe.recipeName;
             document.querySelector("#numberOfServings").innerHTML = "Serves " + currentRecipe.numberOfServings + " people"
             document.querySelector("#prepTime").innerHTML = "Preparation time: " + currentRecipe.prepTime;
             document.querySelector("#cookTime").innerHTML = "Cooking time: " + currentRecipe.cookTime;
             document.querySelector("#difficulty").innerHTML = "Difficulty: " + currentRecipe.difficulty;
 
+            // loop to iterate through all ingredients to display in panel
             for (let i = 0; i < currentRecipe.ingredientList.length; i++){
                 let newItem = document.createElement("li");
                 newItem.innerHTML = currentRecipe.ingredientList[i];
                 tabPanels[0].appendChild(newItem);
                 ingredientList.push(newItem.innerHTML);
             }
+            // loop to iterate through all instructions to display in panel
             for (let i = 0; i < currentRecipe.instructionList.length; i++){
                 let newItem = document.createElement("li");
                 newItem.innerHTML = currentRecipe.instructionList[i];
                 tabPanels[1].appendChild(newItem);
             }
+            
+            // assign variable for element to display photo
+            // sets src attribute of element to retrieve correct photo from uploads folder
+            // sets style of photo to fit in page
             let recipePhoto = document.querySelector("#recipePhoto");
             recipePhoto.src = "uploads/" + currentRecipe.recipePhoto;
             recipePhoto.style.borderRadius = "35%";
             recipePhoto.style.margin = "20px";
-            console.log(recipePhoto);
 
-
+            // finishes page setup by assigning values for attributes of style object
             document.querySelector("body").style.backgroundImage = "url(uploads/background.jpg)";
             document.querySelector("body").style.backgroundAttachment = "fixed";
             document.querySelector("body").style.backgroundSize = "100%";
@@ -56,9 +66,13 @@
             document.querySelector("body").style.padding = "40px";
         }
 
+        // function used to return all numbers found in provided string argument
         function getNumbers(string){
+            // turn string into char array
             let charArray = [...string];
+            // assign variable by creating a function that checks for numbers and decimal
             let numbers = charArray.reduce(function (numString, element){
+                // assign variable of reference characters and check if char array element is in reference characters
                 let nums = ".0123456789";
                 if (nums.includes(element)){
                     return numString + element;
@@ -68,9 +82,13 @@
             return numbers;
         }
 
+        // function used to return first index location of number in provided string, used to re-insert updated values later
         function getNumberLocation(string){
+            // turn string into char array and assign variable of reference characters
             let charArray = [...string];
             let numbers = ".0123456789";
+
+            // loop to check if char array element is in reference characters and return index location when it is found
             for (let i = 0; i < charArray.length; i++){
                 if (numbers.includes(charArray[i])){
                     return i;
@@ -78,11 +96,15 @@
             }
         }
 
+        // function used to change values displayed when quantity is changed by user
         function changeQuantity(){
+            // get value from slider bar and parse to int
             let quantity = parseInt(document.querySelector("#sliderBar").value);
             
+            // if statement to re-assign 0 value from html input to 0.5
             quantity = quantity == 0 ? 0.5 : quantity;
 
+            // switch case statement to change displayed quantity choice
             switch (quantity){
                 case 0.5:
                     document.querySelector("#quantity").innerHTML = "Half recipe";
@@ -99,21 +121,29 @@
                 default:
                     document.querySelector("#quantity").innerHTML = "";
             }
+            
+            // assign list elements that contain ingredients to an array
             let ingredientElements = tabPanels[0].getElementsByTagName('*');
-            console.log(ingredientElements);
+            // loop to run through all ingredients
             for (let i = 0; i < ingredientList.length; i++){
+                // assign variable for ingredient item, ingredient amount, and location in string of that amount
                 let ingredientItem = ingredientList[i];
                 let numberLocation = getNumberLocation(ingredientItem);
                 let ingredientAmount = getNumbers(ingredientItem);
+
+                // assign new value to ingredient's inner html calculating the change based on user selection of quantity
                 ingredientElements[i].innerHTML = ingredientItem.substring(0,numberLocation) + 
                                                     (ingredientAmount * quantity) + 
                                                     ingredientItem.substring(numberLocation + ingredientAmount.length, ingredientItem.length);
             }
+            // changes recipe details for prep time and servings amount when user changes quantity
             document.querySelector("#numberOfServings").innerHTML = "Serves " + currentRecipe.numberOfServings * quantity + " people"
             document.querySelector("#prepTime").innerHTML = "Preparation time: " + currentRecipe.prepTime * quantity;
         }
 
+        // function to show/hide the ingredient/instruction panels
         function showPanel(panelIndex){
+            // add mouse over effects to make it clear to user when they hover over the clickable buttons
             function addMouseOverEffect(){
                 tabButtons[hidePanel].style.backgroundColor = "lightgray";
                 tabButtons[hidePanel].style.color = "black";
@@ -122,7 +152,11 @@
                 tabButtons[hidePanel].style.backgroundColor = "grey";
                 tabButtons[hidePanel].style.color = "white";
             }
+
+            // if statement used to assign variable based on which panel's element was passed to function
             let hidePanel = panelIndex == 0 ? 1 : 0;
+
+            // style's button appearance and adds mouseover/mouseout event listener actions
             tabButtons[panelIndex].style.backgroundColor = "lightgray";
             tabButtons[hidePanel].style.backgroundColor = "grey";
             tabButtons[panelIndex].style.color = "black";
@@ -132,6 +166,7 @@
             tabButtons[hidePanel].onmouseover = addMouseOverEffect;
             tabButtons[hidePanel].onmouseout = addMouseOutEffect;
 
+            // change panel style to show selected panel and hide other panel
             tabPanels[panelIndex].style.display = "block";
             tabPanels[panelIndex].style.backgroundColor = "transparent";
             tabPanels[panelIndex].style.color = "yellow";
@@ -139,8 +174,13 @@
             tabPanels[hidePanel].style.display = "none";
         }
         
+        // function used to delete recipe from local storage
         function deleteRecipe(){
+            // if statement using confirm function to have user confirm action)
             if (confirm("Are you sure you want to delete this recipe?")){
+                // if action is confirmed, recipe list variable is assigned from parsed JSON object from local storage
+                // selected recipe is removed from list and new list is changed to JSON object and saved to local storage
+                // user is redirected to recipe list page afterwards
                 let recipeList = JSON.parse(localStorage.getItem("recipeList"));
                 recipeList.splice(JSON.parse(localStorage.getItem("currentRecipe")), 1);
                 localStorage.setItem("recipeList", JSON.stringify(recipeList));

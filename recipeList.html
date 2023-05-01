@@ -12,18 +12,25 @@
     <title>Document</title>
 
     <script>
+      // function to be called when a recipe tile has been clicked
       function goToRecipe(index){
+        // saves index value of selected recipe to local storage to use when next page loads
+        // redirects user to new page for viewing details
         localStorage.setItem("currentRecipe", index);
         window.location.replace("recipeDetails.html");
       }
 
+      // function to setup page after body of html finishes loading, creates all recipe cards
       function pageSetup(){
+        // retrieves recipe list from local storage and parses it to a JS object
         let recipeList = JSON.parse(localStorage.getItem("recipeList"));
-        console.log(recipeList);
         
+        // assigns variable for div to contain all recipe cards
         let recipeCards = document.querySelector("#recipeCards");
 
+        // for loop to iterate through all items on recipe list
         for (let i = 0; i < recipeList.length; i++){
+          // create elements for different parts of recipe card and assigns to variables
           let recipeBox = document.createElement("div");
           let newCard = document.createElement("button");
           let recipeIndex = document.createElement("input");
@@ -32,8 +39,10 @@
           let prepCookTime = document.createElement("p");
           let difficulty = document.createElement("p");
 
+          // assign classes to recipe card to use bootstrap styles
           recipeBox.classList = "col-8 col-sm-6 col-md-4 col-lg-3 col-xl-2 mx-auto ";
 
+          // adds styling and event listener to recipe card
           newCard.style.borderRadius = "20px"
           newCard.style.border = "none";
           newCard.style.margin = "103px";
@@ -43,24 +52,38 @@
             goToRecipe(i);
           });
 
+          // assign value of recipe index element and set it to hidden
           recipeIndex.hidden = true;
           recipeIndex.value = i;
+
+          // add recipe name to element for use in card
           recipeName.innerHTML = recipeList[i].recipeName;
+
+          // add photo path and size to element to use in card
           recipePhoto.src = "uploads/" + recipeList[i].recipePhoto;
           recipePhoto.width = "150";
+
+          // calculate total combined prep and cook time and assign to elent for use in card
           prepCookTime.innerHTML = String(parseInt(recipeList[i].prepTime) + parseInt(recipeList[i].cookTime)) + " minutes";
+
+          // add difficulty of recipe to element for use in card
           difficulty.innerHTML = recipeList[i].difficulty;
 
+          // add above elements to card for display to user
           newCard.appendChild(recipeIndex);
           newCard.appendChild(recipeName);
           newCard.appendChild(recipePhoto);
           newCard.appendChild(prepCookTime);
           newCard.appendChild(difficulty);
 
+          // add card to larger recipe box used for style/spacing purposes
           recipeBox.appendChild(newCard);
 
+          // add recipe box to div of all other recipes
           recipeCards.appendChild(recipeBox);
         }
+
+        // changes some styles of page
         document.querySelector("body").style.backgroundImage = "url(uploads/background.jpg)";
         document.querySelector("body").style.backgroundAttachment = "fixed";
         document.querySelector("body").style.backgroundSize = "100%";
